@@ -1,0 +1,106 @@
+﻿@model IEnumerable<BBC.Models.Product>
+
+<style>
+    .catalog {
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 20px;
+    }
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 6 карточек на строку */
+        gap: 20px; /* Отступ между карточками */
+    }
+
+    /* Медиазапросы для адаптации на разных экранах */
+    
+    .product-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-card img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .btn-primary, .btn-secondary {
+        background-color: #f7c6e6; /* Нежный розовый */
+        color: #fff;
+        font-size: 16px;
+        padding: 15px 30px;
+        border: 2px solid #f7c6e6;
+        border-radius: 50px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover, .btn-secondary:hover {
+        background-color: #ff87a1;
+        border-color: #ff87a1;
+        transform: translateY(-5px);
+    }
+
+    .btn-primary:active, .btn-secondary:active {
+        background-color: #e06d87;
+        border-color: #e06d87;
+        transform: translateY(2px);
+    }
+    /* Горизонтальное выравнивание кнопок */
+    .button-group {
+        display: flex; /* Делаем кнопки в одной строке */
+        gap: 10px; /* Отступ между кнопками */
+        justify-content: center; /* Центрируем кнопки внутри карточки */
+        margin-top: 10px; /* Отступ сверху для кнопок */
+    }
+
+        /* Убираем стандартные отступы для формы внутри button-group */
+        .button-group form {
+            margin: 0;
+        }
+
+
+    
+</style>
+
+<section class="catalog">
+    <h2>Каталог товаров</h2>
+    <div class="product-grid" >
+        @foreach (var product in Model)
+        {
+            <div class="product-card">
+                @if (product.Images != null && product.Images.Any())
+                {
+                    <img src="@product.Images.First().ImageUrl" alt="@product.Name" />
+                }
+                else
+                {
+                    <img src="/images/default-product.png" alt="Изображение отсутствует" />
+                }
+                <h3>@product.Name</h3>
+                <p>@product.Price.ToString("C")</p>
+                <div class="button-group">
+                    <form method="post" asp-controller="Cart" asp-action="AddToCart" class="add-to-cart-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="productId" value="@product.ProductId" />
+                        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                    </form>
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-secondary">...</a>
+                </div>
+            </div>
+
+        }
+    </div>
+</section>

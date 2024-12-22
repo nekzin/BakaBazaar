@@ -1,0 +1,164 @@
+@model IEnumerable<CartItem>
+
+@{
+    ViewData["Title"] = "Ваша корзина";
+}
+
+<style>
+    .cart-table {
+        width: 100%;
+        margin-top: 30px;
+        border-collapse: collapse;
+    }
+
+    .cart-table th, .cart-table td {
+        padding: 15px;
+        text-align: center;
+        border: 1px solid #f7c6e6;
+    }
+
+    .cart-table th {
+        background-color: #f7c6e6;
+        color: #fff;
+    }
+
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .cart-item button {
+        background-color: #ff87a1;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .cart-item button:hover {
+        background-color: #e06d87;
+    }
+
+    .cart-summary {
+        margin-top: 30px;
+        text-align: right;
+        font-size: 1.2em;
+    }
+
+    .cart-summary .total-price {
+        font-weight: bold;
+        color: #ff87a1;
+    }
+
+    .empty-cart {
+        text-align: center;
+        font-size: 1.5em;
+        color: #ff87a1;
+        margin-top: 40px;
+    }
+
+    .checkout-btn {
+        background-color: #f7c6e6;
+        color: #fff;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .checkout-btn:hover {
+        background-color: #ff87a1;
+    }
+</style>
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Продукт</th>
+                <th>Количество</th>
+                <th>Цена</th>
+                <th>Итог</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Product.Name</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@(item.Price * item.Quantity)</td>
+                    <td class="cart-item">
+                        <form method="post" asp-controller="Cart" asp-action="RemoveFromCart" class="inline-form">
+                            <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                            <button type="submit" class="btn btn-danger">Удалить</button>
+                        </form>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', () => {
+                                document.querySelectorAll('form[action$="RemoveFromCart"]').forEach(form => {
+                                    form.addEventListener('submit', async (e) => {
+                                        e.preventDefault();
+
+                                        const formData = new FormData(form);
+                                        const response = await fetch(form.action, {
+                                            method: 'POST',
+                                            body: formData
+                                        });
+
+                                        if (response.ok) {
+                                            const result = await response.json();
+                                            if (result.success) {
+                                                // Удаляем строку товара из таблицы
+                                                form.closest('tr').remove();
+
+                                                // Обновляем сумму в корзине
+                                                const totalPriceElement = document.querySelector('.total-price');
+                                                if (totalPriceElement) {
+                                                    totalPriceElement.textContent = result.totalPrice;
+                                                }
+
+                                                // Если корзина пуста, показываем сообщение
+                                                const cartTable = document.querySelector('.cart-table');
+                                                if (!cartTable.querySelector('tbody tr')) {
+                                                    cartTable.remove();
+                                                    document.querySelector('.cart-summary').remove();
+                                                    document.querySelector('.empty-cart').style.display = 'block';
+                                                }
+                                            }
+                                        } else {
+                                            const errorData = await response.json();
+                                            console.error('Error:', errorData.message);
+                                            alert(errorData.message || 'Ошибка при удалении товара из корзины');
+                                        }
+                                    });
+                                });
+                            });
+
+                        </script>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="cart-summary">
+        <p>Total: <span class="total-price">@Model.Sum(item => item.Price * item.Quantity).ToString("C")</span></p>
+        <a href="@Url.Action("Checkout", "Cart")" class="checkout-btn">Оплатить</a>
+    </div>
+}
+else
+{
+    <p class="empty-cart">Ваша корзина пуста.</p>
+}

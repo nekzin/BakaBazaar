@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container mt-5 text-center">
+    <h1 class="display-4 text-danger">Доступ запрещён</h1>
+    <p class="lead mt-4">У вас нет прав для доступа к этой странице.</p>
+    <p>Если вы считаете, что это ошибка, свяжитесь с администратором системы.</p>
+
+    <div class="mt-4">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg">На главную</a>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Войти</a>
+        }
+    </div>
+</div>

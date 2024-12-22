@@ -1,0 +1,104 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* Основной стиль кнопки */
+    .btn-primary {
+        background-color: #f7c6e6; /* Нежный розовый фон */
+        color: #fff; /* Белый текст */
+        font-size: 18px; /* Увеличенный шрифт */
+        padding: 12px 25px; /* Просторные отступы */
+        border: 2px solid #f7c6e6;
+        border-radius: 50px; /* Скругление */
+        text-decoration: none;
+        display: inline-block; /* Не на всю ширину */
+        transition: all 0.3s ease; /* Плавная анимация */
+    }
+
+        .btn-primary:hover {
+            background-color: #ff87a1; /* Более яркий розовый */
+            border-color: #ff87a1;
+            transform: translateY(-5px);
+        }
+
+        .btn-primary:active {
+            background-color: #e06d87;
+            border-color: #e06d87;
+            transform: translateY(2px);
+        }
+
+    /* Стиль для формы */
+    .form-control {
+        font-size: 16px;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-floating label {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .form-floating {
+        margin-bottom: 1.5rem; /* Увеличенный отступ */
+    }
+
+    .form-check-label {
+        font-size: 14px;
+        color: #333;
+    }
+
+    /* Общий стиль карточки */
+    .card {
+        background: #fff;
+        border: none;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        background-color: #f7c6e6; /* Фон страницы */
+    }
+
+    .form-actions {
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card">
+        <h2 class="text-center mb-4" style="font-family: 'Arial', sans-serif; color: #333;">Вход</h2>
+        <form id="account" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+            <div class="form-floating">
+                <input asp-for="Input.Email" class="form-control" autocomplete="email" placeholder="name@example.com" />
+                <label asp-for="Input.Email">Email</label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" placeholder="Password" />
+                <label asp-for="Input.Password">Пароль</label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" asp-for="Input.RememberMe" />
+                <label asp-for="Input.RememberMe" class="form-check-label">Remember me</label>
+            </div>
+            <div class="form-actions">
+                <button id="login-submit" type="submit" class="btn btn-primary">Войти</button>
+            </div>
+            <div class="text-center mt-4">
+                <p><a id="forgot-password" asp-page="./ForgotPassword" class="text-decoration-none">Забыли пароль?</a></p>
+                <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Зарегистрироваться</a></p>
+                <p><a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="text-decoration-none">Повторить подтверждение email</a></p>
+            </div>
+        </form>
+    </div>
+</div>

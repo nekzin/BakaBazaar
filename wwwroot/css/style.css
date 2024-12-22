@@ -1,0 +1,51 @@
+﻿namespace BBC.wwwroot.css {
+    /* Главные стили */
+    .container
+
+{
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background: #333;
+    color: white;
+    padding: 10px;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+    nav ul li {
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+.main-banner {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.featured-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.product-item {
+    width: 30%;
+    border: 1px solid #ddd;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+    .product-item img {
+        max-width: 100%;
+        height: auto;
+    }
+
+}

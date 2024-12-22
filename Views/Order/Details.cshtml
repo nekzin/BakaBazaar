@@ -1,0 +1,70 @@
+@model BBC.Models.Order
+
+@{
+    ViewData["Title"] = "Детали заказа";
+}
+
+<section class="order-details" style="background-color: #f8f9fa; min-height: 100vh; padding: 20px;">
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h2 class="text-center mb-0">Детали заказа</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4 text-secondary">Пользователь:</dt>
+                    <dd class="col-sm-8">
+                        @Model.User.FullName (@Model.User.Email)
+                    </dd>
+
+                    <dt class="col-sm-4 text-secondary">Статус заказа:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge
+                            @(Model.Status == OrderStatus.Delivered ? "bg-success" :
+                              Model.Status == OrderStatus.Processing ? "bg-warning text-dark" : "bg-secondary")">
+                            @Model.Status.ToString()
+                        </span>
+
+                    </dd>
+
+                    <dt class="col-sm-4 text-secondary">Общая сумма:</dt>
+                    <dd class="col-sm-8">
+                        @Model.TotalPrice.ToString("C")
+                    </dd>
+
+                    <dt class="col-sm-4 text-secondary">Дата создания:</dt>
+                    <dd class="col-sm-8">
+                        @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                    </dd>
+                </dl>
+
+                <h4 class="mt-4">Товары в заказе:</h4>
+                <table class="table table-striped mt-3">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Товар</th>
+                            <th>Количество</th>
+                            <th>Цена</th>
+                            <th>Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.Product.Name</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price.ToString("C")</td>
+                                <td>@(item.Price * item.Quantity)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer text-end">
+                <a asp-action="Index" class="btn btn-secondary">Назад</a>
+                <a asp-action="Edit" asp-route-id="@Model.OrderId" class="btn btn-primary">Редактировать</a>
+            </div>
+        </div>
+    </div>
+</section>

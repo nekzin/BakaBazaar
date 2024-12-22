@@ -1,0 +1,16 @@
+﻿@model IEnumerable<BBC.Models.Review>
+
+@if (!Model.Any())
+{
+    <p>Отзывов пока нет.</p>
+}
+else
+{
+    @foreach (var review in Model)
+    {
+        <div>
+            <strong>@review.User.UserName</strong> (Оценка: @review.Rating)
+            <p>@review.Comment</p>
+        </div>
+    }
+}

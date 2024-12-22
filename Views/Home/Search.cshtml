@@ -1,0 +1,127 @@
+﻿@model IEnumerable<BBC.Models.Product>
+@{
+    ViewData["Title"] = "Search Products";
+    var searchQuery = ViewData["SearchQuery"]?.ToString();
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 6 карточек на строку */
+        gap: 20px; /* Отступ между карточками */
+    }
+    .form-control {
+        font-size: 16px;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    /* Медиазапросы для адаптации на разных экранах */
+
+    .product-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+    /* Основной стиль кнопки */
+    .btn-primary {
+        background-color: #f7c6e6; /* Нежный розовый фон */
+        color: #fff; /* Белый цвет текста */
+        font-size: 16px; /* Размер шрифта */
+        padding: 15px 30px; /* Отступы по вертикали и горизонтали */
+        border: 2px solid #f7c6e6; /* Рамка того же цвета, что и фон */
+        border-radius: 50px; /* Скругленные углы */
+        text-decoration: none; /* Убираем подчеркивание */
+        display: inline-block; /* Чтобы кнопка была блочным элементом */
+        transition: all 0.3s ease; /* Плавный переход для анимации */
+    }
+
+        /* Эффект при наведении */
+        .btn-primary:hover {
+            background-color: #ff87a1; /* Более яркий розовый при наведении */
+            color: #fff; /* Белый цвет текста */
+            border-color: #ff87a1; /* Цвет рамки при наведении */
+            transform: translateY(-5px); /* Легкий подъем кнопки */
+        }
+
+        /* Эффект при нажатии */
+        .btn-primary:active {
+            background-color: #e06d87; /* Тёмно-розовый при нажатии */
+            border-color: #e06d87; /* Цвет рамки при нажатии */
+            transform: translateY(2px); /* Легкое опускание кнопки */
+        }
+</style>
+<section style="background-color: #f8f9fa; min-height: 100vh; padding: 20px 0;">
+    <div class="container" style="margin-left: auto; margin-right: auto;">
+        <h1 class="text-center" style="font-family: Arial, sans-serif; color: #333; margin-left: auto; margin-right: auto; width: fit-content;">
+            Поиск товаров
+        </h1>
+
+        <!-- Форма поиска -->
+        <form method="get" class="d-flex justify-content-center my-4" style="width: fit-content; margin-left: auto;margin-right: auto;">
+            <input type="text" name="query" class="form-control w-50" placeholder="Введите запрос..." style="border-radius: 15px; margin-right: 10px;" />
+            <button type="submit" class="btn btn-primary">Искать</button>
+        </form>
+
+        <!-- Результаты поиска -->
+        <!-- Результаты поиска -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="product-grid" style="width: fit-content; margin-left: auto;">
+                @foreach (var product in Model)
+                {
+                    <div class="product-card">
+                        <div class="card h-100 shadow-sm" style="border-radius: 15px;">
+                            @if (product.Images != null && product.Images.Any())
+                            {
+                                <img src="@product.Images.First().ImageUrl" class="card-img-top" alt="@product.Name" style="border-radius: 15px 15px 0 0; height: 200px; object-fit: cover;" />
+                            }
+                            else
+                            {
+                                <img src="/images/default-product.png" class="card-img-top" alt="Изображение отсутствует" style="border-radius: 15px 15px 0 0; height: 200px; object-fit: cover;" />
+                            }
+                            <div class="card-body">
+                                <h5 class="card-title">@product.Name</h5>
+                                <p class="card-text">Цена: @product.Price.ToString("C")</p>
+                                <div class="button-group">
+                                    <form method="post" asp-controller="Cart" asp-action="AddToCart" class="add-to-cart-form">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@product.ProductId" />
+                                        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                                    </form>
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-secondary">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(searchQuery))
+        {
+            <div class="alert alert-warning text-center">
+                Ничего не найдено "<strong>@searchQuery</strong>".
+            </div>
+        }
+        else
+        {
+            <p class="text-center text-muted">Введите запрос для поиска продуктов</p>
+        }
+
+    </div>
+</section>
+ 

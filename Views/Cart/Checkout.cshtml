@@ -1,0 +1,170 @@
+﻿@model BBC.Models.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h1 class="text-center my-4" style="padding: 20px">@ViewData["Title"]</h1>
+
+<form asp-action="Checkout" method="post" class="needs-validation" novalidate style="padding: 20px">
+    <!-- Full Name Field -->
+    <div class="form-floating mb-3">
+        <input asp-for="FullName" class="form-control" id="fullName" placeholder="Full Name" required />
+        <label for="fullName">Полное Имя</label>
+        <div class="invalid-feedback" style="padding-top: 15px;">
+            Пожалуйста напишите своё полное имя.
+        </div>
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <!-- Email Field -->
+    <div class="form-floating mb-3">
+        <input asp-for="Email" class="form-control" id="email" type="email" placeholder="name@example.com" required />
+        <label for="email">Email</label>
+        <div class="invalid-feedback" style="padding-top: 15px;">
+            Пожалуйста напишите валидный email.
+        </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <h3>Товары в корзине</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Продукт</th>
+                <th>Количество</th>
+                <th>Цена</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems.Select((value, index) => new { value, index }))
+            {
+                <tr>
+                    <td>@item.value.ProductName</td>
+                    <td>@item.value.Quantity</td>
+                    <td>@item.value.Price.ToString("C")</td>
+
+                    <!-- Скрытые поля для передачи данных о товаре -->
+                    <input type="hidden" name="CartItems[@item.index].ProductId" value="@item.value.ProductId" />
+                    <input type="hidden" name="CartItems[@item.index].ProductName" value="@item.value.ProductName" />
+                    <input type="hidden" name="CartItems[@item.index].Quantity" value="@item.value.Quantity" />
+                    <input type="hidden" name="CartItems[@item.index].Price" value="@item.value.Price" />
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Итого: @Model.TotalPrice.ToString("C")</h4>
+
+    <div class="d-flex justify-content-between mt-4">
+        <button type="submit" class="btn btn-primary">Оформить заказ</button>
+        <a asp-action="Index" class="btn btn-secondary">Назад в корзину</a>
+    </div>
+</form>
+
+@section Styles {
+    <style>
+        .btn-primary {
+            background-color: #f7c6e6; /* Нежный розовый фон */
+            color: #fff; /* Белый цвет текста */
+            font-size: 16px; /* Размер шрифта */
+            border: 2px solid #f7c6e6; /* Рамка того же цвета, что и фон */
+            border-radius: 50px; /* Скругленные углы */
+            text-decoration: none; /* Убираем подчеркивание */
+            display: inline-block; /* Чтобы кнопка была блочным элементом */
+            transition: all 0.3s ease; /* Плавный переход для анимации */
+        }
+
+            /* Эффект при наведении */
+            .btn-primary:hover {
+                background-color: #ff87a1; /* Более яркий розовый при наведении */
+                color: #fff; /* Белый цвет текста */
+                border-color: #ff87a1; /* Цвет рамки при наведении */
+                transform: translateY(-5px); /* Легкий подъем кнопки */
+            }
+
+            /* Эффект при нажатии */
+            .btn-primary:active {
+                background-color: #e06d87; /* Тёмно-розовый при нажатии */
+                border-color: #e06d87; /* Цвет рамки при нажатии */
+                transform: translateY(2px); /* Легкое опускание кнопки */
+            }
+
+        .btn-secondary {
+            background-color: #f1f1f1; /* Светло-серый фон */
+            color: #333; /* Темный текст */
+            border: 2px solid #ddd; /* Светлая рамка */
+            font-size: 16px;
+            padding: 12px 20px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-secondary:hover {
+                background-color: #ddd;
+                color: #333;
+                border-color: #ccc;
+            }
+
+            .btn-secondary:active {
+                background-color: #ccc;
+                border-color: #bbb;
+            }
+
+        .form-floating label {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            margin-right: auto;
+            font-size: 16px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .needs-validation .form-control:invalid {
+            border-color: #dc3545;
+        }
+
+        .needs-validation .form-control:valid {
+            border-color: #28a745;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: #495057;
+        }
+
+        table th, table td {
+            text-align: center;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Example of custom validation handling
+        (function () {
+            'use strict'
+            window.addEventListener('load', function () {
+                var forms = document.getElementsByClassName('needs-validation')
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+            }, false)
+        })()
+    </script>
+}

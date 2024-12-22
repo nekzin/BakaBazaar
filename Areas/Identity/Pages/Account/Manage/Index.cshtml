@@ -1,0 +1,134 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+<style>
+    .form-floating label {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .form-floating {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        margin-right: auto;
+        font-size: 16px;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+</style>
+<partial name="_StatusMessage" for="StatusMessage" />
+<section style="background-color: #f8f9fa; min-height: 100vh; padding: 20px;">
+    <div class="container">
+        <div class="card shadow-lg" style="border-radius: 15px;">
+            <div class="card-header bg-primary text-white">
+                <h2 class="text-center mb-0">Ваш профиль</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" style="margin: 0 auto; ">
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.UserName" id="username" class="form-control" placeholder="Имя пользователя" />
+                        <label for="username">Имя пользователя</label>
+                        <span asp-validation-for="Input.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input value="@Model.Email" id="email" class="form-control" placeholder="Email" disabled />
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input asp-for="Input.PhoneNumber" id="phone" class="form-control" placeholder="Номер телефона" />
+                        <label for="phone">Номер телефона</label>
+                        <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 50px; padding: 10px 30px;">Сохранить</button>
+                        <a href="/Cart" class="btn btn-secondary btn-lg" style="border-radius: 50px; padding: 10px 30px;">Моя корзина</a>
+                    </div>
+                </form>
+
+                <section class="mt-5">
+                    <h3 class="mb-4">Избранные товары</h3>
+                    @if (Model.WishlistItems != null && Model.WishlistItems.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Товар</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.WishlistItems)
+                                {
+                                    <tr>
+                                        <td>@item.Product.Name</td>
+                                        <td>
+                                            <form asp-action="RemoveFromWishlist" asp-controller="Wishlist" method="post">
+                                                <input type="hidden" name="productId" value="@item.ProductId" />
+                                                <button type="submit" class="btn btn-primary btn-sm">Удалить</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>Ваш список избранных товаров пуст.</p>
+                    }
+                </section>
+
+                <section class="mt-5">
+                    <h3 class="mb-4">Ваши заказы</h3>
+                    @if (Model.Orders != null && Model.Orders.Any())
+                    {
+                        <table class="table table-striped">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Сумма</th>
+                                    <th>Статус</th>
+                                    <th>Действие</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model.Orders)
+                                {
+                                    <tr>
+                                        <td>@order.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>@order.TotalPrice.ToString("C")</td>
+                                        <td>
+                                            <span class="badge @(order.Status == "Delivered" ? "bg-success" : "bg-secondary")">@order.Status</span>
+                                        </td>
+                                        <td>
+                                            <form method="get" asp-controller="Order" asp-action="Details">
+                                                <input type="hidden" name="id" value="@order.OrderId" />
+                                                <button type="submit" class="btn btn-primary btn-sm">Подробнее</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>У вас пока нет заказов.</p>
+                    }
+                </section>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

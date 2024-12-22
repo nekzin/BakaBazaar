@@ -1,0 +1,57 @@
+@model BBC.Models.Product
+<style>
+    .product-image {
+        width: 350px; /* Фиксированная ширина */
+        height: 350px; /* Фиксированная высота */
+        object-fit: cover; /* Обрезка изображения, чтобы заполнить рамку */
+        border-radius: 10px; /* Скругление углов */
+        display: block; /* Центрирование, если нужно */
+        margin: 20px auto; /* Отступы сверху и снизу */
+    }
+</style>
+<section class="product-details">
+    <h1>@Model.Name</h1>
+
+    @if (Model.Images != null && Model.Images.Any())
+    {
+        <img src="@Model.Images.First().ImageUrl" alt="@Model.Name" class="product-image" />
+    }
+    else
+    {
+        <img src="/images/no-image.jpg" alt="Изображение отсутствует" class="product-image" />
+    }
+
+    <p>@Model.Description</p>
+    <p>Цена: @Model.Price.ToString("C")</p>
+
+    <form method="post" asp-controller="Cart" asp-action="AddToCart" class="add-to-cart-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="productId" value="@Model.ProductId" />
+        <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+    </form>
+
+    <form method="post" asp-controller="Wishlist" asp-action="AddToWishlist">
+        <input type="hidden" name="productId" value="@Model.ProductId" />
+        <button type="submit" class="btn btn-secondary">Добавить в желаемое</button>
+    </form>
+    <section class="product-reviews">
+        <h2>Отзывы</h2>
+        @if (Model.Reviews.Any())
+        {
+            <ul>
+                @foreach (var review in Model.Reviews)
+                {
+                    <li>
+                        <p><strong>@review.User.UserName</strong> - @review.CreatedAt.ToString("dd.MM.yyyy")</p>
+                        <p>@review.Comment</p>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>Отзывов пока нет.</p>
+        }
+    </section>
+    <a asp-controller="Review" asp-action="Create" asp-route-productId="@Model.ProductId" class="btn btn-secondary">Оставить отзыв</a>
+</section>

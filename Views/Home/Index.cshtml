@@ -1,0 +1,122 @@
+﻿@model IEnumerable<BBC.Models.Product>
+
+@{
+    ViewData["Title"] = "Главная страница - Baka Bazaar";
+}
+<style>
+    img {
+      border-radius: 10px;  /* Радиус скругления */
+        border: 2px solid #f7c6e6; /* Параметры рамки */
+    }
+    /* Стиль для контейнера кнопки */
+    .catalog-link {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    /* Основной стиль кнопки */
+    .btn-primary {
+        background-color: #f7c6e6; /* Нежный розовый фон */
+        color: #fff; /* Белый цвет текста */
+        font-size: 16px; /* Размер шрифта */
+        padding: 15px 30px; /* Отступы по вертикали и горизонтали */
+        border: 2px solid #f7c6e6; /* Рамка того же цвета, что и фон */
+        border-radius: 50px; /* Скругленные углы */
+        text-decoration: none; /* Убираем подчеркивание */
+        display: inline-block; /* Чтобы кнопка была блочным элементом */
+        transition: all 0.3s ease; /* Плавный переход для анимации */
+    }
+
+        /* Эффект при наведении */
+        .btn-primary:hover {
+            background-color: #ff87a1; /* Более яркий розовый при наведении */
+            color: #fff; /* Белый цвет текста */
+            border-color: #ff87a1; /* Цвет рамки при наведении */
+            transform: translateY(-5px); /* Легкий подъем кнопки */
+        }
+
+        /* Эффект при нажатии */
+        .btn-primary:active {
+            background-color: #e06d87; /* Тёмно-розовый при нажатии */
+            border-color: #e06d87; /* Цвет рамки при нажатии */
+            transform: translateY(2px); /* Легкое опускание кнопки */
+        }
+
+</style>
+<!-- Главный баннер -->
+<section class="banner">
+    <div class="banner-content">
+        <h1>Твои любимые фандомы здесь!</h1>
+        <p>50+ Аниме-тайтлов &nbsp; | &nbsp; 100+ Клиентов</p>
+        <form action="@Url.Action("Search", "Home")" method="get">
+            <input type="text" name="query" placeholder="Что вы ищите?" class="search-box" />
+            <button type="submit">🔍</button>
+        </form>
+    </div>
+</section>
+<!-- Кнопка перехода в каталог товаров -->
+
+<!-- Каталог товаров -->
+<section class="catalog">
+    <section class="catalog-link">
+        <a href="@Url.Action("Catalog", "Home")" class="btn btn-primary">Каталог товаров</a>
+    </section>
+    <div class="product-grid">
+        @foreach (var product in Model.Take(3))
+        {
+            <div class="product-card">
+                <img src="@product.Images.First().ImageUrl" alt="@product.Name" />
+                <h3>@product.Name</h3>
+                <p>@product.Price.ToString("C")</p>
+                <form method="post" asp-controller="Cart" asp-action="AddToCart" class="add-to-cart-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@product.ProductId" />
+                    <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+                </form>
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-secondary">...</a>
+            </div>
+        }
+    </div>
+</section>
+
+
+<!-- О нас -->
+<section class="about-us">
+    <h2>О нас</h2>
+    <div class="features">
+        <div class="feature-item">
+            <span>😄</span>
+            <h3>Большой ассортимент</h3>
+            <p>Широкий выбор товаров для всех категорий аниме-фанов.</p>
+        </div>
+        <div class="feature-item">
+            <span>📦</span>
+            <h3>Быстрая доставка</h3>
+            <p>Доставка за 4 дня или меньше бесплатно.</p>
+        </div>
+        <div class="feature-item">
+            <span>📞</span>
+            <h3>Открытые контакты</h3>
+            <p>Мы всегда на связи и готовы ответить на вопросы.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Что у нас есть -->
+<section class="categories">
+    <h2>Что у нас есть?</h2>
+    <div class="categories-grid">
+        <div class="category-item">
+            <img src="~/images/posters.jpg" alt="Плакаты" />
+            <p>Плакаты</p>
+        </div>
+        <div class="category-item">
+            <img src="~/images/figures.jpg" alt="Фигурки" />
+            <p>Фигурки</p>
+        </div>
+        <div class="category-item">
+            <img src="~/images/food.jpg" alt="Азиатская еда" />
+            <p>Азиатская еда</p>
+        </div>
+    </div>
+</section>

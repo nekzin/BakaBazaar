@@ -1,0 +1,25 @@
+﻿<h2>Manage Users</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>@string.Join(", ", await UserManager.GetRolesAsync(user))</td>
+                <td>
+                    <a href="#">Edit</a> |
+                    <a href="#">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

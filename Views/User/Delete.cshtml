@@ -1,0 +1,15 @@
+@model BBC.Models.User
+
+<h1>Delete User</h1>
+
+<p>Are you sure you want to delete this user?</p>
+<div>
+    <p><strong>UserName:</strong> @Model.UserName</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
